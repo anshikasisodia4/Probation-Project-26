@@ -18,7 +18,7 @@ class AppTheme {
       focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(
           color: Color(0xFFE58FA0),
-          width: 2,
+          width: 3,
         ),
       ),
     ),
