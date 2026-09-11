@@ -8,7 +8,7 @@ class Task {
     this.id,
     required this.title,
     this.description = '',
-    this.isCompleted = false,
+    this.isCompleted  = false,
   });
 
   Map<String, dynamic> toMap() {
