@@ -6,7 +6,7 @@ class AppTheme {
 
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF64B5F6),
-      foregroundColor:Colors.white,
+      foregroundColor: Colors.white,
     ),
 
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
@@ -16,10 +16,7 @@ class AppTheme {
 
     inputDecorationTheme: const InputDecorationTheme(
       focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Color(0xFF2196F3),
-          width: 3,
-        ),
+        borderSide: BorderSide(color: Color(0xFF2196F3), width: 3),
       ),
     ),
 
