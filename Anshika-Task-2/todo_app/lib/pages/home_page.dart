@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/task.dart';
 import '../widgets/task_card.dart';
 import 'add_task_page.dart';
@@ -11,40 +13,46 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Task> tasks = [];
+  // Firebase Firestore reference
+  final CollectionReference tasksCollection = FirebaseFirestore.instance
+      .collection('tasks');
 
   // Add task
-  void addTask(String title, String description) {
-    setState(() {
-      tasks.add(Task(title: title, description: description));
+  Future<void> addTask(String title, String description) async{
+     await tasksCollection.add({
+      'title': title,
+      'description': description,
+      'isCompleted': false,
     });
   }
 
   // Delete task
-  void deleteTask(int index) {
-    setState(() {
-      tasks.removeAt(index);
-    });
+  Future<void> deleteTask(Task task) async{
+    if (task.id != null) {
+      await tasksCollection.doc(task.id).delete();
+    }
   }
 
   // Complete or pending
-  void toggleTask(int index) {
-    setState(() {
-      tasks[index].isCompleted = !tasks[index].isCompleted;
-    });
+  Future<void> toggleTask(Task task) async{
+     if (task.id != null) {
+      await tasksCollection.doc(task.id).update({
+        'isCompleted': !task.isCompleted,
+      });
+    }
   }
 
   // Edit task
-  void editTask(int index) async {
+  Future<void> editTask(Task task) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AddTaskPage(task: tasks[index])),
+      MaterialPageRoute(builder: (context) => AddTaskPage(task:task)),
     );
 
-    if (result != null) {
-      setState(() {
-        tasks[index].title = result['title'];
-        tasks[index].description = result['description'];
+    if (result != null && task.id!=null) {
+       await tasksCollection.doc(task.id).update({
+        'title': result['title'],
+        'description': result['description'],
       });
     }
   }
@@ -59,27 +67,68 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
 
-      // View tasks
-      body: tasks.isEmpty
-          ? const Center(
+     
+      body: StreamBuilder<QuerySnapshot>(
+        stream: tasksCollection.snapshots(),
+        builder: (context, snapshot) {
+
+          // Loading
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          // Error
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('Something went wrong'),
+            );
+          }
+
+          // Get tasks from Firebase
+          final taskDocuments = snapshot.data!.docs;
+
+          // No tasks
+          if (taskDocuments.isEmpty) {
+            return const Center(
               child: Text(
                 'No tasks yet\nAdd a task to get started!',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey,
+                ),
               ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: tasks.length,
-              itemBuilder: (context, index) {
-                return TaskCard(
-                  task: tasks[index],
-                  onDelete: () => deleteTask(index),
-                  onToggle: () => toggleTask(index),
-                  onEdit: () => editTask(index),
-                );
-              },
-            ),
+            );
+          }
+
+          // Display tasks
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: taskDocuments.length,
+            itemBuilder: (context, index) {
+
+              final document = taskDocuments[index];
+
+              final task = Task.fromMap(
+                document.id,
+                document.data() as Map<String, dynamic>,
+              );
+
+              return TaskCard(
+                task: task,
+
+                onDelete: () => deleteTask(task),
+
+                onToggle: () => toggleTask(task),
+
+                onEdit: () => editTask(task),
+              );
+            },
+          );
+        },
+      ),
 
       // Add task
       floatingActionButton: FloatingActionButton(
