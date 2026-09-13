@@ -2,29 +2,29 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
-    scaffoldBackgroundColor: const Color(0xFFFFF5F7),
+    scaffoldBackgroundColor: const Color(0xFFEAF4FF),
 
     appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFFF4B6C2),
-      foregroundColor: Color(0xFF4A3035),
+      backgroundColor: Color(0xFF64B5F6),
+      foregroundColor:Colors.white,
     ),
 
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: Color(0xFFE58FA0),
+      backgroundColor: Color(0xFF2196F3),
       foregroundColor: Colors.white,
     ),
 
     inputDecorationTheme: const InputDecorationTheme(
       focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(
-          color: Color(0xFFE58FA0),
+          color: Color(0xFF2196F3),
           width: 3,
         ),
       ),
     ),
 
     colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFFE58FA0),
+      seedColor: const Color(0xFF2196F3),
       brightness: Brightness.light,
     ),
   );
