@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/task.dart';
 
 class AddTaskPage extends StatefulWidget {
@@ -15,6 +15,7 @@ class AddTaskPage extends StatefulWidget {
 class _AddTaskPageState extends State<AddTaskPage> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -33,62 +34,81 @@ class _AddTaskPageState extends State<AddTaskPage> {
     super.dispose();
   }
 
-
-
   // Validation
- 
   Future<void> saveTask() async {
-  final title = titleController.text.trim();
-  final description = descriptionController.text.trim();
+    if (_isSaving) return;
+    final title = titleController.text.trim();
+    final description = descriptionController.text.trim();
 
-  if (title.isEmpty) {
+    if (title.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a task title')),
+      );
+      return;
+    }
+    setState(() {
+      _isSaving = true;
+    });
+    try {
+  final user = FirebaseAuth.instance.currentUser;
+
+  if (user == null) {
+    setState(() {
+      _isSaving = false;
+    });
+
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Please enter a task title')),
+      const SnackBar(
+        content: Text('Please login first'),
+      ),
     );
     return;
   }
 
-  try {
-    if (widget.task == null) {
-      // Add new task
-      await FirebaseFirestore.instance.collection('tasks').add({
-        'title': title,
-        'description': description,
-        'isCompleted': false,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-    } else {
-      // Update existing task
-      await FirebaseFirestore.instance
-          .collection('tasks')
-          .doc(widget.task!.id)
-          .update({
-        'title': title,
-        'description': description,
-      });
-    }
+  final tasksCollection = FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('tasks');
 
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            widget.task == null
-                ? 'Task added successfully'
-                : 'Task updated successfully',
+  if (widget.task == null) {
+    // Add new task
+    await tasksCollection.add({
+      'title': title,
+      'description': description,
+      'isCompleted': false,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  } else {
+    // Update existing task
+    await tasksCollection.doc(widget.task!.id).update({
+      'title': title,
+      'description': description,
+    });
+  }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              widget.task == null
+                  ? 'Task added successfully'
+                  : 'Task updated successfully',
+            ),
           ),
-        ),
-      );
+        );
 
-      Navigator.pop(context);
-    }
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
     }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -136,11 +156,18 @@ class _AddTaskPageState extends State<AddTaskPage> {
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: saveTask,
-                child: Text(
-                  isEditing ? 'Update Task' : 'Add Task',
-                  style: const TextStyle(fontSize: 16),
-                ),
+                
+                onPressed: _isSaving ? null : saveTask,
+                child: _isSaving
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2.5),
+                      )
+                    : Text(
+                        isEditing ? 'Update Task' : 'Add Task',
+                        style: const TextStyle(fontSize: 16),
+                      ),
               ),
             ),
           ],
