@@ -33,11 +33,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
     super.dispose();
   }
 
- Future<void> saveTask() async {
+
+
+  // Validation
+ 
+  Future<void> saveTask() async {
   final title = titleController.text.trim();
   final description = descriptionController.text.trim();
 
-  // Validation
   if (title.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Please enter a task title')),
@@ -46,16 +49,34 @@ class _AddTaskPageState extends State<AddTaskPage> {
   }
 
   try {
-    // Save task to Firebase Firestore
-    await FirebaseFirestore.instance.collection('tasks').add({
-      'title': title,
-      'description': description,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+    if (widget.task == null) {
+      // Add new task
+      await FirebaseFirestore.instance.collection('tasks').add({
+        'title': title,
+        'description': description,
+        'isCompleted': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } else {
+      // Update existing task
+      await FirebaseFirestore.instance
+          .collection('tasks')
+          .doc(widget.task!.id)
+          .update({
+        'title': title,
+        'description': description,
+      });
+    }
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Task saved successfully')),
+        SnackBar(
+          content: Text(
+            widget.task == null
+                ? 'Task added successfully'
+                : 'Task updated successfully',
+          ),
+        ),
       );
 
       Navigator.pop(context);
@@ -63,7 +84,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   } catch (e) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving task: $e')),
+        SnackBar(content: Text('Error: $e')),
       );
     }
   }

@@ -17,25 +17,18 @@ class _HomePageState extends State<HomePage> {
   final CollectionReference tasksCollection = FirebaseFirestore.instance
       .collection('tasks');
 
-  // Add task
-  Future<void> addTask(String title, String description) async{
-     await tasksCollection.add({
-      'title': title,
-      'description': description,
-      'isCompleted': false,
-    });
-  }
+ 
 
   // Delete task
-  Future<void> deleteTask(Task task) async{
+  Future<void> deleteTask(Task task) async {
     if (task.id != null) {
       await tasksCollection.doc(task.id).delete();
     }
   }
 
   // Complete or pending
-  Future<void> toggleTask(Task task) async{
-     if (task.id != null) {
+  Future<void> toggleTask(Task task) async {
+    if (task.id != null) {
       await tasksCollection.doc(task.id).update({
         'isCompleted': !task.isCompleted,
       });
@@ -46,11 +39,11 @@ class _HomePageState extends State<HomePage> {
   Future<void> editTask(Task task) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AddTaskPage(task:task)),
+      MaterialPageRoute(builder: (context) => AddTaskPage(task: task)),
     );
 
-    if (result != null && task.id!=null) {
-       await tasksCollection.doc(task.id).update({
+    if (result != null && task.id != null) {
+      await tasksCollection.doc(task.id).update({
         'title': result['title'],
         'description': result['description'],
       });
@@ -67,23 +60,17 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
 
-     
       body: StreamBuilder<QuerySnapshot>(
         stream: tasksCollection.snapshots(),
         builder: (context, snapshot) {
-
           // Loading
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           // Error
           if (snapshot.hasError) {
-            return const Center(
-              child: Text('Something went wrong'),
-            );
+            return const Center(child: Text('Something went wrong'));
           }
 
           // Get tasks from Firebase
@@ -95,10 +82,7 @@ class _HomePageState extends State<HomePage> {
               child: Text(
                 'No tasks yet\nAdd a task to get started!',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.grey,
-                ),
+                style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
             );
           }
@@ -108,7 +92,6 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.all(16),
             itemCount: taskDocuments.length,
             itemBuilder: (context, index) {
-
               final document = taskDocuments[index];
 
               final task = Task.fromMap(
@@ -132,15 +115,11 @@ class _HomePageState extends State<HomePage> {
 
       // Add task
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await Navigator.push(
+        onPressed: () {
+          Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddTaskPage()),
           );
-
-          if (result != null) {
-            addTask(result['title'], result['description']);
-          }
         },
         child: const Icon(Icons.add),
       ),
