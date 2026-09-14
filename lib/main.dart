@@ -12,6 +12,7 @@ Future<void> main() async {
 
   runApp(const TodoApp());
 }
+
 class TodoApp extends StatelessWidget {
   const TodoApp({super.key});
 

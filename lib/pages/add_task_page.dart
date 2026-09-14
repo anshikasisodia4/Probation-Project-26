@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/task.dart';
 
@@ -32,20 +33,41 @@ class _AddTaskPageState extends State<AddTaskPage> {
     super.dispose();
   }
 
-  void saveTask() {
-    final title = titleController.text.trim();
-    final description = descriptionController.text.trim();
+ Future<void> saveTask() async {
+  final title = titleController.text.trim();
+  final description = descriptionController.text.trim();
 
-    // Validation
-    if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a task title')),
-      );
-      return;
-    }
-
-    Navigator.pop(context, {'title': title, 'description': description});
+  // Validation
+  if (title.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter a task title')),
+    );
+    return;
   }
+
+  try {
+    // Save task to Firebase Firestore
+    await FirebaseFirestore.instance.collection('tasks').add({
+      'title': title,
+      'description': description,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Task saved successfully')),
+      );
+
+      Navigator.pop(context);
+    }
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error saving task: $e')),
+      );
+    }
+  }
+}
 
   @override
   Widget build(BuildContext context) {
