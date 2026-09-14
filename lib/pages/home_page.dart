@@ -84,6 +84,16 @@ class _HomePageState extends State<HomePage> {
 
           // Get tasks from Firebase
           final taskDocuments = snapshot.data!.docs;
+          final totalTasks = taskDocuments.length;
+
+          final completedTasks = taskDocuments.where((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            return data['isCompleted'] == true;
+          }).length;
+
+          final pendingTasks = totalTasks - completedTasks;
+
+          final progress = totalTasks == 0 ? 0.0 : completedTasks / totalTasks;
 
           // No tasks
           if (taskDocuments.isEmpty) {
@@ -97,27 +107,98 @@ class _HomePageState extends State<HomePage> {
           }
 
           // Display tasks
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: taskDocuments.length,
-            itemBuilder: (context, index) {
-              final document = taskDocuments[index];
+          // Progress + Tasks
+          return Column(
+            children: [
+              // Progress Card
+              Container(
+                margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    // Circular Progress
+                    SizedBox(
+                      height: 90,
+                      width: 90,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            value: progress,
+                            strokeWidth: 10,
+                            backgroundColor: Colors.grey.shade300,
+                          ),
+                          Text(
+                            '${(progress * 100).round()}%',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
-              final task = Task.fromMap(
-                document.id,
-                document.data() as Map<String, dynamic>,
-              );
+                    const SizedBox(width: 25),
 
-              return TaskCard(
-                task: task,
+                    // Task Counts
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Task Progress',
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
 
-                onDelete: () => deleteTask(task),
+                          const SizedBox(height: 10),
 
-                onToggle: () => toggleTask(task),
+                          Text(
+                            '✓ Completed: $completedTasks',
+                            style: const TextStyle(fontSize: 16),
+                          ),
 
-                onEdit: () => editTask(task),
-              );
-            },
+                          const SizedBox(height: 5),
+
+                          Text(
+                            '○ Pending: $pendingTasks',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Existing Task List
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: taskDocuments.length,
+                  itemBuilder: (context, index) {
+                    final document = taskDocuments[index];
+
+                    final task = Task.fromMap(
+                      document.id,
+                      document.data() as Map<String, dynamic>,
+                    );
+
+                    return TaskCard(
+                      task: task,
+                      onDelete: () => deleteTask(task),
+                      onToggle: () => toggleTask(task),
+                      onEdit: () => editTask(task),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
