@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/task.dart';
 import '../widgets/task_card.dart';
@@ -14,10 +15,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // Firebase Firestore reference
-  final CollectionReference tasksCollection = FirebaseFirestore.instance
-      .collection('tasks');
+  CollectionReference get tasksCollection {
+    final user = FirebaseAuth.instance.currentUser;
 
- 
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .collection('tasks');
+  }
+
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+  }
 
   // Delete task
   Future<void> deleteTask(Task task) async {
@@ -54,10 +63,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'My Tasks',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: const Text('My Tasks'),
+        actions: [
+          IconButton(icon: const Icon(Icons.logout), onPressed: logout),
+        ],
       ),
 
       body: StreamBuilder<QuerySnapshot>(
