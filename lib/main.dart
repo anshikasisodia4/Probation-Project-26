@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+
 import 'firebase_options.dart';
 import 'pages/splash_page.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'pages/login_page.dart';
 import 'pages/home_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const TodoApp());
 }
@@ -26,14 +27,13 @@ class TodoApp extends StatelessWidget {
       title: 'Taskly',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 162, 136, 157),
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF64B5F6)),
       ),
-     home: const AuthCheck(),
+      home: const AuthCheck(),
     );
   }
 }
+
 class AuthCheck extends StatelessWidget {
   const AuthCheck({super.key});
 

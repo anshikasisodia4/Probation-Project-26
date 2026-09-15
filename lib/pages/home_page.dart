@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Tasks'),
+        title: const Text(' Tasks'),
         actions: [
           IconButton(icon: const Icon(Icons.logout), onPressed: logout),
         ],
@@ -106,7 +106,6 @@ class _HomePageState extends State<HomePage> {
             );
           }
 
-          // Display tasks
           // Progress + Tasks
           return Column(
             children: [
@@ -115,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                 margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  color: const Color(0xFFE3F2FD),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -131,6 +130,9 @@ class _HomePageState extends State<HomePage> {
                             value: progress,
                             strokeWidth: 10,
                             backgroundColor: Colors.grey.shade300,
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              Color(0xFF90CAF9),
+                            ),
                           ),
                           Text(
                             '${(progress * 100).round()}%',
