@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'login_page.dart';
 import '../models/task.dart';
 import '../widgets/task_card.dart';
 import 'add_task_page.dart';
@@ -24,9 +24,18 @@ class _HomePageState extends State<HomePage> {
         .collection('tasks');
   }
 
-  Future<void> logout() async {
-    await FirebaseAuth.instance.signOut();
-  }
+ Future<void> logout() async {
+  await FirebaseAuth.instance.signOut();
+
+  if (!mounted) return;
+
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const LoginPage(),
+    ),
+  );
+}
 
   // Delete task
   Future<void> deleteTask(Task task) async {
