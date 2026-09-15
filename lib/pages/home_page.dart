@@ -65,7 +65,11 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text(' Tasks'),
         actions: [
-          IconButton(icon: const Icon(Icons.logout), onPressed: logout),
+          TextButton.icon(
+            onPressed: logout,
+            icon: const Icon(Icons.logout),
+            label: const Text('Logout'),
+          ),
         ],
       ),
 
