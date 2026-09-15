@@ -38,7 +38,7 @@ class _SplashPageState extends State<SplashPage> {
             ),
             const SizedBox(height: 20),
             const Text(
-              'ToDo App',
+              'Taskly',
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
