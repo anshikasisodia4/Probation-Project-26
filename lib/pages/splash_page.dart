@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-
 import 'home_page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -34,7 +32,7 @@ class _SplashPageState extends State<SplashPage> {
             const Icon(
               Icons.check_circle_outline,
               size: 90,
-              color: Color.fromARGB(255, 109, 154, 189),
+              color: Color.fromARGB(255, 165, 196, 219),
             ),
             const SizedBox(height: 20),
             const Text(
@@ -43,7 +41,7 @@ class _SplashPageState extends State<SplashPage> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Keep things organized',
+              'Plan.Do.Done',
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
           ],

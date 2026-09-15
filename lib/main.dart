@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'firebase_options.dart';
 import 'pages/splash_page.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'pages/login_page.dart';
 import 'pages/home_page.dart';
 
@@ -25,10 +22,20 @@ class TodoApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Taskly',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF64B5F6)),
-      ),
+    theme: ThemeData(
+  useMaterial3: true,
+
+  scaffoldBackgroundColor: const Color(0xFFF5F9FD),
+
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: const Color.fromARGB(255, 6, 20, 36),
+  ),
+
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color.fromARGB(255, 6, 20, 36),
+    foregroundColor: Colors.white,
+  ),
+),
       home: const AuthCheck(),
     );
   }

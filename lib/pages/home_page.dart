@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'profile_page.dart';
 import 'login_page.dart';
 import '../models/task.dart';
 import '../widgets/task_card.dart';
@@ -24,18 +25,17 @@ class _HomePageState extends State<HomePage> {
         .collection('tasks');
   }
 
- Future<void> logout() async {
-  await FirebaseAuth.instance.signOut();
+  // Logout
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
 
-  if (!mounted) return;
+    if (!mounted) return;
 
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => const LoginPage(),
-    ),
-  );
-}
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
+  }
 
   // Delete task
   Future<void> deleteTask(Task task) async {
@@ -68,20 +68,42 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Add task
+  Future<void> addTask() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddTaskPage()),
+    );
+
+    if (result != null) {
+      await tasksCollection.add({
+        'title': result['title'],
+        'description': result['description'],
+        'isCompleted': false,
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // App Bar
       appBar: AppBar(
-        title: const Text(' Tasks'),
+        title: const Text('Tasks'),
         actions: [
-          TextButton.icon(
-            onPressed: logout,
-            icon: const Icon(Icons.logout),
-            label: const Text('Logout'),
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              );
+            },
           ),
         ],
       ),
 
+      // Body
       body: StreamBuilder<QuerySnapshot>(
         stream: tasksCollection.snapshots(),
         builder: (context, snapshot) {
@@ -97,6 +119,7 @@ class _HomePageState extends State<HomePage> {
 
           // Get tasks from Firebase
           final taskDocuments = snapshot.data!.docs;
+
           final totalTasks = taskDocuments.length;
 
           final completedTasks = taskDocuments.where((doc) {
@@ -127,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                 margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE3F2FD),
+                  color: const Color.fromARGB(255, 217, 232, 240),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -144,9 +167,10 @@ class _HomePageState extends State<HomePage> {
                             strokeWidth: 10,
                             backgroundColor: Colors.grey.shade300,
                             valueColor: const AlwaysStoppedAnimation<Color>(
-                              Color(0xFF90CAF9),
+                              Color.fromARGB(255, 5, 15, 36),
                             ),
                           ),
+
                           Text(
                             '${(progress * 100).round()}%',
                             style: const TextStyle(
@@ -191,7 +215,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
 
-              // Existing Task List
+              // Task List
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(16),
@@ -218,14 +242,11 @@ class _HomePageState extends State<HomePage> {
         },
       ),
 
-      // Add task
+      // Add Task Button
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddTaskPage()),
-          );
-        },
+        backgroundColor: const Color.fromARGB(255, 6, 20, 36),
+        foregroundColor: Colors.white,
+        onPressed: addTask,
         child: const Icon(Icons.add),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../models/task.dart';
 
 class TaskCard extends StatelessWidget {
@@ -18,7 +19,7 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: const Color(0xFFE3F2FD),
+      color: const Color.fromARGB(255, 220, 235, 244),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       margin: const EdgeInsets.only(bottom: 12),
@@ -28,6 +29,8 @@ class TaskCard extends StatelessWidget {
         leading: Checkbox(
           value: task.isCompleted,
           onChanged: (_) => onToggle(),
+          shape: const CircleBorder(),
+          activeColor: const Color(0xFF1565C0),
         ),
 
         //title
