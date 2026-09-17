@@ -214,33 +214,27 @@ class _HomePageState extends State<HomePage> {
               ),
 
              
-             Expanded(
-  child: GridView.builder(
-    padding: const EdgeInsets.all(16),
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2, 
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      childAspectRatio: 0.75,
-    ),
-    itemCount: taskDocuments.length,
-    itemBuilder: (context, index) {
-      final document = taskDocuments[index];
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: taskDocuments.length,
+                  itemBuilder: (context, index) {
+                    final document = taskDocuments[index];
 
-      final task = Task.fromMap(
-        document.id,
-        document.data() as Map<String, dynamic>,
-      );
+                    final task = Task.fromMap(
+                      document.id,
+                      document.data() as Map<String, dynamic>,
+                    );
 
-      return TaskCard(
-        task: task,
-        onDelete: () => deleteTask(task),
-        onToggle: () => toggleTask(task),
-        onEdit: () => editTask(task),
-      );
-    },
-  ),
-),
+                    return TaskCard(
+                      task: task,
+                      onDelete: () => deleteTask(task),
+                      onToggle: () => toggleTask(task),
+                      onEdit: () => editTask(task),
+                    );
+                  },
+                ),
+              ),
             ],
           );
         },
