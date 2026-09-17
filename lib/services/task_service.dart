@@ -6,12 +6,12 @@ class TaskService {
   final CollectionReference tasks =
       FirebaseFirestore.instance.collection('tasks');
 
-  // CREATE
+
   Future<void> addTask(Task task) async {
     await tasks.add(task.toMap());
   }
 
-  // READ
+
   Stream<List<Task>> getTasks() {
     return tasks.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
@@ -23,7 +23,6 @@ class TaskService {
     });
   }
 
-  // UPDATE
   Future<void> updateTask(Task task) async {
     if (task.id == null) return;
 

@@ -34,7 +34,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     super.dispose();
   }
 
-  // Validation
+
   Future<void> saveTask() async {
     if (_isSaving) return;
     final title = titleController.text.trim();
@@ -71,7 +71,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
       .collection('tasks');
 
   if (widget.task == null) {
-    // Add new task
+   
     await tasksCollection.add({
       'title': title,
       'description': description,
@@ -79,7 +79,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
       'createdAt': FieldValue.serverTimestamp(),
     });
   } else {
-    // Update existing task
+    
     await tasksCollection.doc(widget.task!.id).update({
       'title': title,
       'description': description,

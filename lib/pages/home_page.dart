@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Firebase Firestore reference
+  
   CollectionReference get tasksCollection {
     final user = FirebaseAuth.instance.currentUser;
 
@@ -25,7 +25,6 @@ class _HomePageState extends State<HomePage> {
         .collection('tasks');
   }
 
-  // Logout
   Future<void> logout() async {
     await FirebaseAuth.instance.signOut();
 
@@ -37,14 +36,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Delete task
+ 
   Future<void> deleteTask(Task task) async {
     if (task.id != null) {
       await tasksCollection.doc(task.id).delete();
     }
   }
 
-  // Complete or pending
+
   Future<void> toggleTask(Task task) async {
     if (task.id != null) {
       await tasksCollection.doc(task.id).update({
@@ -53,7 +52,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Edit task
   Future<void> editTask(Task task) async {
     final result = await Navigator.push(
       context,
@@ -68,7 +66,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Add task
+
   Future<void> addTask() async {
     final result = await Navigator.push(
       context,
@@ -103,7 +101,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
 
-      // Body
+      
       body: StreamBuilder<QuerySnapshot>(
         stream: tasksCollection.snapshots(),
         builder: (context, snapshot) {
@@ -117,7 +115,7 @@ class _HomePageState extends State<HomePage> {
             return const Center(child: Text('Something went wrong'));
           }
 
-          // Get tasks from Firebase
+         
           final taskDocuments = snapshot.data!.docs;
 
           final totalTasks = taskDocuments.length;
@@ -131,7 +129,7 @@ class _HomePageState extends State<HomePage> {
 
           final progress = totalTasks == 0 ? 0.0 : completedTasks / totalTasks;
 
-          // No tasks
+       
           if (taskDocuments.isEmpty) {
             return const Center(
               child: Text(
@@ -142,10 +140,10 @@ class _HomePageState extends State<HomePage> {
             );
           }
 
-          // Progress + Tasks
+         
           return Column(
             children: [
-              // Progress Card
+           
               Container(
                 margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 padding: const EdgeInsets.all(20),
@@ -155,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Row(
                   children: [
-                    // Circular Progress
+                    
                     SizedBox(
                       height: 90,
                       width: 90,
@@ -184,7 +182,7 @@ class _HomePageState extends State<HomePage> {
 
                     const SizedBox(width: 25),
 
-                    // Task Counts
+                  
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,34 +213,39 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
 
-              // Task List
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: taskDocuments.length,
-                  itemBuilder: (context, index) {
-                    final document = taskDocuments[index];
+             
+             Expanded(
+  child: GridView.builder(
+    padding: const EdgeInsets.all(16),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2, 
+      crossAxisSpacing: 12,
+      mainAxisSpacing: 12,
+      childAspectRatio: 0.75,
+    ),
+    itemCount: taskDocuments.length,
+    itemBuilder: (context, index) {
+      final document = taskDocuments[index];
 
-                    final task = Task.fromMap(
-                      document.id,
-                      document.data() as Map<String, dynamic>,
-                    );
+      final task = Task.fromMap(
+        document.id,
+        document.data() as Map<String, dynamic>,
+      );
 
-                    return TaskCard(
-                      task: task,
-                      onDelete: () => deleteTask(task),
-                      onToggle: () => toggleTask(task),
-                      onEdit: () => editTask(task),
-                    );
-                  },
-                ),
-              ),
+      return TaskCard(
+        task: task,
+        onDelete: () => deleteTask(task),
+        onToggle: () => toggleTask(task),
+        onEdit: () => editTask(task),
+      );
+    },
+  ),
+),
             ],
           );
         },
       ),
 
-      // Add Task Button
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromARGB(255, 6, 20, 36),
         foregroundColor: Colors.white,

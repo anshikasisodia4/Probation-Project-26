@@ -33,7 +33,7 @@ class TaskCard extends StatelessWidget {
           activeColor: const Color(0xFF1565C0),
         ),
 
-        //title
+      
         title: Text(
           task.title,
           style: TextStyle(
@@ -42,7 +42,7 @@ class TaskCard extends StatelessWidget {
             decoration: task.isCompleted ? TextDecoration.lineThrough : null,
           ),
         ),
-        // description
+     
         subtitle: task.description.isNotEmpty
             ? Padding(
                 padding: const EdgeInsets.only(top: 6),
@@ -54,7 +54,7 @@ class TaskCard extends StatelessWidget {
               )
             : null,
 
-        // Edit and Delete
+ 
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

@@ -61,7 +61,7 @@ class _AuthCheckState extends State<AuthCheck> {
 
     if (!mounted) return;
 
-    // Check if user is logged in
+  
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {

@@ -1,30 +1,12 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'home_page.dart';
 
-class SplashPage extends StatefulWidget {
+class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
-
-  @override
-  State<SplashPage> createState() => _SplashPageState();
-}
-
-class _SplashPageState extends State<SplashPage> {
-  @override
-  void initState() {
-    super.initState();
-
-    Timer(const Duration(seconds: 2), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF061424),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -32,17 +14,39 @@ class _SplashPageState extends State<SplashPage> {
             const Icon(
               Icons.check_circle_outline,
               size: 90,
-              color: Color.fromARGB(255, 165, 196, 219),
+              color: Colors.white,
             ),
+
             const SizedBox(height: 20),
+
             const Text(
               'Taskly',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
+
             const SizedBox(height: 10),
-            Text(
-              'Plan.Do.Done',
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+
+            const Text(
+              'Plan. Do. Done.',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white70,
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            const SizedBox(
+              width: 25,
+              height: 25,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                color: Colors.white,
+              ),
             ),
           ],
         ),

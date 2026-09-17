@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'login_page.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -12,9 +13,7 @@ class ProfilePage extends StatelessWidget {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (context) => const LoginPage(),
-      ),
+      MaterialPageRoute(builder: (context) => const LoginPage()),
     );
   }
 
@@ -23,9 +22,7 @@ class ProfilePage extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-      ),
+      appBar: AppBar(title: const Text('Profile')),
 
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -33,20 +30,14 @@ class ProfilePage extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
 
-            // Profile Icon
             const CircleAvatar(
               radius: 55,
               backgroundColor: Color.fromARGB(255, 96, 110, 119),
-              child: Icon(
-                Icons.person,
-                size: 60,
-                color: Colors.white,
-              ),
+              child: Icon(Icons.person, size: 60, color: Colors.white),
             ),
 
             const SizedBox(height: 20),
 
-            // Name
             const Text(
               'User',
               style: TextStyle(
@@ -58,18 +49,13 @@ class ProfilePage extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            // Email
             Text(
               user?.email ?? 'No email available',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
 
             const SizedBox(height: 35),
 
-            // Account Information
             Card(
               color: const Color.fromARGB(255, 225, 235, 241),
               elevation: 2,
@@ -82,15 +68,12 @@ class ProfilePage extends StatelessWidget {
                   color: Color.fromARGB(255, 11, 25, 35),
                 ),
                 title: const Text('Email'),
-                subtitle: Text(
-                  user?.email ?? 'Not available',
-                ),
+                subtitle: Text(user?.email ?? 'Not available'),
               ),
             ),
 
             const SizedBox(height: 15),
 
-            // Logout
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -100,9 +83,7 @@ class ProfilePage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0D1B2A),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 15,
-                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
